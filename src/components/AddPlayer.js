@@ -24,12 +24,22 @@ class AddPlayer extends Component{
             large
             backgroundColor="skyblue"
             icon={{name: 'cached'}}
-            title={this.props.submitbutton}/>
+            title={this.props.submitbutton}
+            onPress={this.handleOk.bind(this)}/>
           </View>)
   }
 
   onPressBack(){
       this.props.navigator.pop();
+  }
+
+  handleOk(e){
+    const value = this.refs.playername.value;
+    const data = {
+      name: value
+    }
+    this.props.onSubmit(e, data);
+    this.props.navigator.pop();
   }
 }
 
@@ -47,7 +57,8 @@ const styles = StyleSheet.create({
 AddPlayer.defaultProps = {
   title: 'Add Player',
   placeholder: 'Enter the player name',
-  submitbutton: 'Add Player'
+  submitbutton: 'Add Player',
+  onSubmit: (e, data) => {}
 }
 
 export default AddPlayer;

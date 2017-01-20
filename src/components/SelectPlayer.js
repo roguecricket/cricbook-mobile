@@ -51,8 +51,12 @@ class SelectPlayer extends Component{
     this.props.navigator.pop();
   }
 
-  onSelect(){
-
+  onSelect(e){
+     const player = this.refs.player.selectedValue;
+     this.props.onSubmit(e, {
+       player
+     })
+     this.props.navigator.pop();
   }
 
 }
