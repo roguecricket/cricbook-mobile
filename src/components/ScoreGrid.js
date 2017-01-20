@@ -3,12 +3,14 @@ import React, {
   PropTypes
 } from 'react';
 import {
-  View
+  View, StyleSheet
 } from 'react-native';
-import Title from '../elements/Title';
+
+import NavigationBar from 'react-native-navbar';
 import Score from '../elements/Score';
 import { Button } from 'react-native-elements'
 import SelectPlayer from './SelectPlayer';
+import AddPlayer from './AddPlayer';
 import AddBalls from './AddBalls';
 
 
@@ -20,7 +22,12 @@ class ScoreGrid extends Component{
   render(){
     return (
       <View>
-         <Title> ScoreGrid </Title>
+        <NavigationBar
+          style={styles.header}
+          title={{title: 'ScoreGrid', 'tintColor': 'white'}}
+          leftButton={{title: 'RESET' , 'tintColor': 'white', 'handler': this.onPressReset.bind(this)}}
+          rightButton={{title: 'CHANGE', 'tintColor': 'white', 'handler': this.onPressChange.bind(this)}}/>
+
          <Score />
          <Button
           large
@@ -47,7 +54,33 @@ class ScoreGrid extends Component{
       name: "ADD BALLS"
     })
   }
+
+  onPressReset(){
+
+  }
+
+  onPressChange(){
+   this.props.navigator.push({
+     component: AddPlayer,
+     props: {title: "Change Team Name",
+             placeholder: "Enter team name",
+             submitbutton: "Change Name"},
+     name: "Change name"
+   })
+  }
+
 }
+
+const styles = StyleSheet.create({
+  header: {
+    backgroundColor: 'skyblue',
+    color: 'white'
+  },
+  title: {
+    textAlign: 'center',
+    color: 'white',
+  },
+});
 
 
 export default ScoreGrid;

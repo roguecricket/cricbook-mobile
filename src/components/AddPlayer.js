@@ -19,12 +19,12 @@ class AddPlayer extends Component{
            />
 
            <FormLabel>Name</FormLabel>
-           <FormInput ref="playername" placeholder="Enter the player name"/>
+           <FormInput ref="playername" placeholder={this.props.placeholder}/>
            <Button
             large
             backgroundColor="skyblue"
             icon={{name: 'cached'}}
-            title='Add Player' />
+            title={this.props.submitbutton}/>
           </View>)
   }
 
@@ -45,7 +45,9 @@ const styles = StyleSheet.create({
 });
 
 AddPlayer.defaultProps = {
-  title: 'Add Player'
+  title: 'Add Player',
+  placeholder: 'Enter the player name',
+  submitbutton: 'Add Player'
 }
 
 export default AddPlayer;
