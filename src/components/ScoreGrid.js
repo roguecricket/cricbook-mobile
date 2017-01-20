@@ -5,7 +5,9 @@ import React, {
 import {
   View, StyleSheet
 } from 'react-native';
-
+import {bindActionCreators} from 'redux';
+import {connect} from 'react-redux';
+import * as actionCreators from '../actions/';
 import NavigationBar from 'react-native-navbar';
 import Score from '../elements/Score';
 import { Button } from 'react-native-elements'
@@ -20,6 +22,7 @@ class ScoreGrid extends Component{
   }
 
   render(){
+    const {team} = this.props;
     return (
       <View>
         <NavigationBar
@@ -28,7 +31,7 @@ class ScoreGrid extends Component{
           leftButton={{title: 'RESET' , 'tintColor': 'white', 'handler': this.onPressReset.bind(this)}}
           rightButton={{title: 'CHANGE', 'tintColor': 'white', 'handler': this.onPressChange.bind(this)}}/>
 
-         <Score />
+         <Score team = {team}/>
          <Button
           large
           backgroundColor="skyblue"
@@ -64,9 +67,14 @@ class ScoreGrid extends Component{
      component: AddPlayer,
      props: {title: "Change Team Name",
              placeholder: "Enter team name",
-             submitbutton: "Change Name"},
+             submitbutton: "Change Name",
+             onSubmit: this.onNameChange.bind(this)},
      name: "Change name"
    })
+  }
+
+  onNameChange(e, data){
+    this.props.updateName(data.name);
   }
 
 }
@@ -82,5 +90,17 @@ const styles = StyleSheet.create({
   },
 });
 
+
+const mapStateToProps = function(state){
+  return {
+    team: state.details.name
+  }
+}
+
+const mapDispatchToProps = (dispatch) => {
+  return bindActionCreators(actionCreators, dispatch);
+}
+
+ScoreGrid = connect(mapStateToProps, mapDispatchToProps)(ScoreGrid)
 
 export default ScoreGrid;

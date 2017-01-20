@@ -10,6 +10,14 @@ import NavigationBar from 'react-native-navbar';
 
 
 class AddPlayer extends Component{
+
+  constructor(props){
+    super(props);
+    this.state = {
+      text: ''
+    }
+  }
+
   render(){
     return (<View>
           <NavigationBar
@@ -19,7 +27,10 @@ class AddPlayer extends Component{
            />
 
            <FormLabel>Name</FormLabel>
-           <FormInput ref="playername" placeholder={this.props.placeholder}/>
+           <FormInput ref="playername"
+                      textInputRef="pln"
+                      onChangeText={text => this.setState({text})}
+                      placeholder={this.props.placeholder}/>
            <Button
             large
             backgroundColor="skyblue"
@@ -34,7 +45,7 @@ class AddPlayer extends Component{
   }
 
   handleOk(e){
-    const value = this.refs.playername.value;
+    const value = this.state.text;
     const data = {
       name: value
     }
