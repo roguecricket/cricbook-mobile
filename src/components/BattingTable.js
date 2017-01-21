@@ -6,12 +6,15 @@ import {
   View, StyleSheet, Text
 } from 'react-native';
 import NavigationBar from 'react-native-navbar';
+import {bindActionCreators} from 'redux';
+import {connect} from 'react-redux';
 import {
   Cell,
   CustomCell,
   Section,
   TableView
 } from 'react-native-tableview-simple';
+import * as actionCreators from '../actions';
 import AddPlayer from './AddPlayer';
 
 
@@ -46,9 +49,24 @@ class BattingTable extends Component{
   onPressAdd(e){
     this.props.navigator.push({
       component: AddPlayer,
-      props: {type: 'batsman', title: 'Add Batsman'},
+      props: {type: 'batsman',
+           title: 'Add Batsman', onSubmit: this.onAddBatsman.bind(this)},
       name: "AddPlayerShift"
     });
+  }
+
+  onAddBatsman(e, data){
+    const {name} = data;
+    const batsmanOnPitch = this.props.list.filter((bat) => !bat.isOut && !bat.inPavilion);
+    if(batsmanOnPitch.length < 2){
+      if(batsmanOnPitch.length > 0 && batsmanOnPitch[0].strike)
+        this.props.addBatsman(name, false);
+      else
+        this.props.addBatsman(name, true);
+    }
+    else{
+      this.props.addPlayer(name);
+    }
   }
 }
 
@@ -64,8 +82,20 @@ const styles = StyleSheet.create({
 });
 
 BattingTable.defaultProps = {
-  list: [{name: "imthyas", runs: 0, balls: 0},
-         {name: "vijay", runs: 0, balls: 0}],
+  list: []
 }
+
+
+const mapStateToProps = function(state){
+  return {
+    list: state.batting
+  }
+}
+
+const mapDispatchToProps = (dispatch) => {
+  return bindActionCreators(actionCreators, dispatch);
+}
+
+BattingTable = connect(mapStateToProps, mapDispatchToProps)(BattingTable);
 
 export default BattingTable;

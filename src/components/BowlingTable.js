@@ -6,6 +6,8 @@ import {
   View, StyleSheet, Text
 } from 'react-native';
 import NavigationBar from 'react-native-navbar';
+import {bindActionCreators} from 'redux';
+import {connect} from 'react-redux';
 import {
   Cell,
   CustomCell,
@@ -13,7 +15,8 @@ import {
   TableView
 } from 'react-native-tableview-simple';
 import AddPlayer from './AddPlayer';
-
+import * as actionCreators from '../actions';
+import {getOvers} from '../utils';
 
 
 class BowlingTable extends Component{
@@ -47,9 +50,14 @@ class BowlingTable extends Component{
   onPressAdd(){
     this.props.navigator.push({
       component: AddPlayer,
-      props: {type: 'bowler', title: 'Add Bowler'},
+      props: {type: 'bowler', title: 'Add Bowler', onSubmit: this.onAddBowler.bind(this)},
       name: "AddPlayerShift"
     });
+  }
+
+  onAddBowler(e, data){
+    const {name} = data;
+    this.props.addBowler(name);
   }
 }
 
@@ -65,8 +73,22 @@ const styles = StyleSheet.create({
 });
 
 BowlingTable.defaultProps = {
-  list: [{name: "imthyas", overs: "0.0"},
-         {name: "vijay", overs: "0.0"}],
+  list: [],
 }
+
+const mapStateToProps = function(state){
+  return {
+    list: state.bowling.map((bowl) => ({
+      name: bowl.name,
+      overs: getOvers(bowl.balls)
+    }))
+  }
+}
+
+const mapDispatchToProps = (dispatch) => {
+  return bindActionCreators(actionCreators, dispatch);
+}
+
+BowlingTable = connect(mapStateToProps, mapDispatchToProps)(BowlingTable)
 
 export default BowlingTable;

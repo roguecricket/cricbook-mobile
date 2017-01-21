@@ -14,6 +14,7 @@ import { Button } from 'react-native-elements'
 import SelectPlayer from './SelectPlayer';
 import AddPlayer from './AddPlayer';
 import AddBalls from './AddBalls';
+import {getOvers} from '../utils';
 
 
 class ScoreGrid extends Component{
@@ -22,7 +23,7 @@ class ScoreGrid extends Component{
   }
 
   render(){
-    const {team} = this.props;
+    const {team, batting, runs, wickets, overs} = this.props;
     return (
       <View>
         <NavigationBar
@@ -31,7 +32,11 @@ class ScoreGrid extends Component{
           leftButton={{title: 'RESET' , 'tintColor': 'white', 'handler': this.onPressReset.bind(this)}}
           rightButton={{title: 'CHANGE', 'tintColor': 'white', 'handler': this.onPressChange.bind(this)}}/>
 
-         <Score team = {team}/>
+         <Score team = {team}
+                batting={batting}
+                runs={runs}
+                wickets={wickets}
+                overs={overs}/>
          <Button
           large
           backgroundColor="skyblue"
@@ -93,7 +98,11 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = function(state){
   return {
-    team: state.details.name
+    team: state.details.name,
+    batting: state.batting.filter((bat) => !bat.isOut && !bat.inPavilion),
+    runs: state.playing.runs,
+    wickets: state.playing.wickets,
+    overs: getOvers(state.playing.balls)
   }
 }
 

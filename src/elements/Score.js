@@ -30,10 +30,8 @@ class Score extends Component{
 Score.defaultProps = {
   runs: 0,
   wickets: 0,
-  overs: "0.0",
   team: 'untitle',
-  batting: [{name: "imthyas", runs: 0, balls: 0},
-            {name: "vijay", runs: 0, balls: 0}],
+  batting: [],
   bowling: [{name: "sathya", overs: "0.0"}]
 }
 
