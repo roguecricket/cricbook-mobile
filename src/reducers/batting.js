@@ -30,11 +30,11 @@ export default function batting(state = [], action) {
             return state.map((bat) => bat.strike ? {
                 ...bat,
                 runs: bat.runs + action.runs,
-                balls: bat.balls + (action.is_ball ? 1 : 0)
+                balls: bat.balls + action.is_ball
             } : bat)
 
         case 'WICKET':
-            return state.map((bat) => bat.strike == true &&
+            return state.map((bat) => bat.strike &&
                 !bat.inPavilion &&
                 !bat.isOut ? { ...bat,
                     isOut: true

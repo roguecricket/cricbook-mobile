@@ -6,6 +6,8 @@ import {
   Section,
   TableView
 } from 'react-native-tableview-simple';
+import {getOvers} from '../utils';
+
 
 class BowlingList extends Component {
 
@@ -13,7 +15,7 @@ class BowlingList extends Component {
     return (
       <Cell cellStyle="RightDetail"
             title={item.name}
-            detail={item.overs} />
+            detail={getOvers(item.balls)} />
     )
   }
 

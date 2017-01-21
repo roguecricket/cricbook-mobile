@@ -13,6 +13,11 @@ import { FormLabel, FormInput , Button} from 'react-native-elements';
 class AddBalls extends Component{
   constructor(props){
     super(props);
+    this.state = {
+      runs: 0,
+      extra: 'None',
+      player: 'None'
+    }
   }
 
   render(){
@@ -26,18 +31,28 @@ class AddBalls extends Component{
                />
                <View>
                <FormLabel>Runs</FormLabel>
-               <FormInput ref="runs" name="runs" placeholder="Enter the runs" />
+               <FormInput ref="runs"
+                          name="runs"
+                          defaultValue={this.state.runs}
+                          placeholder="Enter the runs"
+                          onChangeText={(text) => {this.setState({runs: parseInt(text)})}} />
                <FormLabel>Extra</FormLabel>
-               <Picker ref="extra" style={styles.picker}>
+               <Picker ref="extra"
+                       selectedValue={this.state.extra}
+                       onValueChange={(text) => {this.setState({extra: text})}}
+                       style={styles.picker}>
                  <Picker.Item label="None" value="None"/>
                  <Picker.Item label="NO BALL" value="NB" />
                  <Picker.Item label="WIDE" value="WD" />
                  <Picker.Item label="LEG BYES" value="LB" />
                  <Picker.Item label="BYES" value="B" />
-                 <Picker.Item label="WICKET" value="WK" />
+                 <Picker.Item label="WICKET" value="WICKET" />
                </Picker>
                <FormLabel>Player</FormLabel>
-               <Picker ref="player" style={styles.picker}>
+               <Picker ref="player"
+                       selectedValue={this.state.player}
+                       onValueChange={(text) => {this.setState({player: text})}}
+                       style={styles.picker}>
                  {
                    selectable.map((player) => (<Picker.Item label={player.name} value={player.name} />))
                  }
@@ -59,9 +74,7 @@ class AddBalls extends Component{
   }
 
   handleOk(e){
-    const runs = this.refs.runs.value;
-    const extra = this.refs.extra.selectedValue;
-    const player = this.refs.player.selectedValue;
+    const {runs, extra, player} = this.state;
 
     this.props.onSubmit(e, {
       runs,
@@ -90,7 +103,7 @@ const styles = StyleSheet.create({
 });
 
 AddBalls.defaultProps = {
-  players: [{name: 'sathya'}, {name: 'adhi'}],
+  players: [],
   onSubmit: (e, data) => {}
 }
 

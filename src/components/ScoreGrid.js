@@ -14,16 +14,21 @@ import { Button } from 'react-native-elements'
 import SelectPlayer from './SelectPlayer';
 import AddPlayer from './AddPlayer';
 import AddBalls from './AddBalls';
-import {getOvers} from '../utils';
+import {getOvers, getActiveBatsman, isExtra, getRuns, getOverInfo} from '../utils';
+import {persistedStore} from '../store';
 
 
 class ScoreGrid extends Component{
   constructor(props){
     super(props);
+    this.state = {
+      bowlerAlreadySelected: false,
+      onBowlerSelect: true
+    }
   }
 
   render(){
-    const {team, batting, runs, wickets, overs} = this.props;
+    const {team, batting, runs, wickets, overString, bowling} = this.props;
     return (
       <View>
         <NavigationBar
@@ -36,35 +41,103 @@ class ScoreGrid extends Component{
                 batting={batting}
                 runs={runs}
                 wickets={wickets}
-                overs={overs}/>
-         <Button
-          large
-          backgroundColor="skyblue"
-          icon={{name: 'cached'}}
-          title='Update'
-          onPress={this.onUpdate.bind(this)}/>
+                overs={overString}
+                bowling={bowling}/>
+              <View>
+                <Button
+                  backgroundColor="skyblue"
+                  icon={{name: 'done'}}
+                  title='Next Ball'
+                  onPress={this.onUpdate.bind(this)}/>
+                <Button
+                  backgroundColor="skyblue"
+                  icon={{name: 'done'}}
+                  title='Next Over'
+                  onPress={this.onUpdateOver.bind(this)}/>
+              </View>
+
       </View>
     )
+  }
+
+  onUpdateOver(){
+    this.props.navigator.push({
+      component: SelectPlayer,
+      props: {},
+      name: "Select Bowler"
+    });
   }
 
   selectBowler(){
     this.props.navigator.push({
       component: SelectPlayer,
-      props: {title: 'Select Bowler'},
+      props: {title: 'Select Bowler', onSubmit: this.onSelection.bind(this)},
       name: "Select"
     })
+  }
+
+  onSelection(e, data){
+    console.log("Calling on select bowler");
+    console.log(data);
+    const {player} = data;
+    const {overs} = this.props;
+    this.props.selectBowler(player, overs.length);
   }
 
   onUpdate(){
     this.props.navigator.push({
       component: AddBalls,
-      props: {title: 'Add Balls'},
+      props: {title: 'Add Balls',
+              onSubmit: this.onUpdateRuns.bind(this),
+              players: this.props.activeOptions},
       name: "ADD BALLS"
     })
   }
 
-  onPressReset(){
+  onUpdateRuns(e, data){
+    const {runs, extra, player} = data;
+    console.log(data);
 
+    const is_extra = isExtra(data);
+    const is_ball = is_extra ? 0 : 1;
+    const calculated = getRuns(data);
+
+    console.log("Is EXtra", is_extra);
+    console.log("IS BALL", is_ball);
+    console.log("Calculated", calculated);
+    this.props.nextBall(data,
+                        this.props.c_over,
+                        calculated);
+    this.props.updateScore(parseInt(calculated), is_ball);
+    this.props.updateBowler(this.props.bowler,
+                            is_extra,
+                            calculated);
+    this.props.updateRuns(is_ball != 0 ? parseInt(runs) : 0, is_ball);
+    if (parseInt(runs) % 2 == 1){
+      this.props.toogleStrike();
+    }
+    if(extra == "WICKET"){
+      console.log("There is a wicket");
+      if(player == "None"){
+        console.log("updating wickets");
+        this.props.wicket();
+        this.props.updateWickets(this.props.bowler);
+      }
+      else
+         this.props.batsmanOut(player);
+      this.props.addWicket();
+    }
+
+    this.setState({
+       bowlerAlreadySelected: false
+    })
+
+    setTimeout(() => this.props.navigator.pop(), 1000)
+
+  }
+
+  onPressReset(){
+    persistedStore.purge();
   }
 
   onPressChange(){
@@ -99,10 +172,16 @@ const styles = StyleSheet.create({
 const mapStateToProps = function(state){
   return {
     team: state.details.name,
-    batting: state.batting.filter((bat) => !bat.isOut && !bat.inPavilion),
+    batting: getActiveBatsman(state.batting),
     runs: state.playing.runs,
     wickets: state.playing.wickets,
-    overs: getOvers(state.playing.balls)
+    overString: getOvers(state.playing.balls),
+    overs: state.overs,
+    balls: state.playing.balls,
+    bowling: state.bowling.filter((bow) => bow.name == state.currentover.bowler),
+    activeOptions: [...getActiveBatsman(state.batting)],
+    bowler: state.currentover.bowler,
+    c_over: state.currentover.over
   }
 }
 

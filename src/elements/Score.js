@@ -32,7 +32,7 @@ Score.defaultProps = {
   wickets: 0,
   team: 'untitle',
   batting: [],
-  bowling: [{name: "sathya", overs: "0.0"}]
+  bowling: []
 }
 
 

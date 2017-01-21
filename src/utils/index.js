@@ -46,5 +46,5 @@ export function getPlayedBatsman(players){
 }
 
 export function getActiveBatsman(players){
-  return players.filter((men) => (men.isActive));
+  return players.filter((men) => (!men.isOut && !men.inPavilion));
 }
