@@ -110,7 +110,7 @@ class ScoreGrid extends Component{
                         calculated);
     this.props.updateScore(parseInt(calculated), is_ball);
     this.props.updateBowler(this.props.bowler,
-                            is_extra,
+                            is_ball,
                             calculated);
     this.props.updateRuns(is_ball != 0 ? parseInt(runs) : 0, is_ball);
     if (parseInt(runs) % 2 == 1){
